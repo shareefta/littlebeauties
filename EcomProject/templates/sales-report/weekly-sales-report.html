@@ -1,0 +1,136 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}
+Sales Report
+{% endblock title %}
+
+{% block custom_css %}
+{% endblock custom_css %}
+
+{% block page_title %}
+Sales Report
+{% endblock page_title %}
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+    <div class="container">
+        <div class="row">
+            {% include 'includes/sidebar-admin-dashboard.html' %}
+            <main class="col-md-10">
+                <div class="row">
+                    <div class="m-2 table-heading text-center font-weight-bold border-bottom bg-info"
+                                 style="font-size: 24px; line-height: 1.5;">Sales Report
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-3 card text-white bg-success m-2" style="max-width: 8rem;">
+                      <div class="card-body text-center">
+                        <a href="{% url 'orders:sales_report' %}" class="text-white font-weight-bold" style="font-size: 14px; line-height: 1.5;">Today</a>
+                      </div>
+                    </div>
+                    <div class="col-md-3 card text-white bg-success m-2" style="max-width: 8rem;">
+                      <div class="card-body text-center">
+                        <a href="{% url 'orders:weekly_sales_report' %}" class="text-white font-weight-bold" style="font-size: 14px; line-height: 1.5;">Weekly</a>
+                      </div>
+                    </div>
+                    <div class="col-md-3 card text-white bg-success m-2" style="max-width: 8rem;">
+                      <div class="card-body text-center">
+                        <a href="{% url 'orders:monthly_sales_report' %}" class="text-white font-weight-bold" style="font-size: 14px; line-height: 1.5;">Monthly</a>
+                      </div>
+                    </div>
+                    <div class="col-md-3 card text-white bg-success m-2" style="max-width: 8rem;">
+                      <div class="card-body text-center">
+                        <a href="{% url 'orders:yearly_sales_report' %}" class="text-white font-weight-bold" style="font-size: 14px; line-height: 1.5;">Yearly</a>
+                      </div>
+                    </div>
+                    <div class="col-md-3 card text-white bg-success m-2" style="max-width: 8rem;">
+                      <div class="card-body text-center">
+                        <a href="{% url 'orders:custom_sales_report' %}" class="text-white font-weight-bold" style="font-size: 14px; line-height: 1.5;">Custom</a>
+                      </div>
+                    </div>
+                </div>
+                <div class="row">
+                    {% load tz %} {# Load the timezone template tags #}
+                    {% with start_of_week|date:"Y-m-d" as formatted_start %}
+                        {% with end_of_week|date:"Y-m-d" as formatted_end %}
+                            <div class="m-2 table-heading text-center text-white font-weight-bold border-bottom bg-secondary"
+                                 style="font-size: 24px; line-height: 1.5;">
+                                Weekly Sales Report ({{ formatted_start }} - {{ formatted_end }})
+                            </div>
+                        {% endwith %}
+                    {% endwith %}
+                    <div class="text-right">
+                        <a href="{% url 'orders:weekly_report_pdf' %}"><i class="fas fa-download" style="color: black;"></i></a>
+                    </div>
+                    <div class="m-2">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                        <label>Sl. No.</label>
+                                    </td>
+                                    <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                        <label>Order Date</label>
+                                    </td>
+                                    <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                        <label>Order Number</label>
+                                    </td>
+                                    <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                        <label>Order Amount</label>
+                                    </td>
+                                    <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                        <label>Amount Paid</label>
+                                    </td>
+                                    <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                        <label>Payment Status</label>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td class="text-center" style="border: 1px solid #ddd;">
+                                        <p class="title mb-0"> {{ forloop.counter }} </p>
+                                    </td>
+                                    {% with order.order.created_at|date:"Y-m-d" as formatted_created_at %}
+                                    <td class="text-center" style="border: 1px solid #ddd;">
+                                        <p class="title mb-0"> {{ formatted_created_at }} </p>
+                                    </td>
+                                    {% endwith %}
+                                    <td class="text-center" style="border: 1px solid #ddd;">
+                                        <p class="title mb-0"> <a href="{% url 'orders:order_detail_admin' order.order.order_number %}"> {{ order.order.order_number }} </a></p>
+                                    </td>
+                                    <td class="text-center" style="border: 1px solid #ddd;">
+                                        <p class="title mb-0"> {{ order.order.order_total | floatformat:2 }} </p>
+                                    </td>
+                                    <td class="text-center" style="border: 1px solid #ddd;">
+                                        <p class="title mb-0"> {{ order.order.payment.amount_paid | floatformat:2 }} </p>
+                                    </td>
+                                    <td class="text-center" style="border: 1px solid #ddd;">
+                                        <p class="title mb-0"> {{ order.order.payment.status }} </p>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                                <tr>
+                                    <th colspan="3" class="text-right bg-primary text-white" style="border: 1px solid #ddd;">Grand Total:</th>
+                                    <th class="text-center bg-primary text-white" style="border: 1px solid #ddd;"> {{ total_order_amount | floatformat:2 }}</th>
+                                    <th class="text-center bg-primary text-white" style="border: 1px solid #ddd;"> {{ total_amount_paid | floatformat:2 }}</th>
+                                    <th class="text-center bg-primary text-white" style="border: 1px solid #ddd;"></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div> <!-- row.// -->
+    </div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock%}
+
+{% block custom_js %}
+
+
+{% endblock custom_js %}

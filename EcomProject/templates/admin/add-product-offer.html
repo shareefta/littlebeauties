@@ -1,0 +1,63 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}
+Add Product Offer
+{% endblock title %}
+
+{% block custom_css %}
+{% endblock custom_css %}
+
+{% block page_title %}
+Add Product Offer
+{% endblock page_title %}
+
+{% block content %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+
+    <!-- ============================ COMPONENT REGISTER   ================================= -->
+    <div class="card mx-auto" style="max-width:520px; margin-top:30px;">
+        <article class="card-body">
+            {% include 'includes/alerts.html' %}
+            <header class="mb-4 bg-info"><h4 class="card-title text-center">Add Product Offer</h4></header>
+            <!-- your_template.html -->
+            <form action="{% url 'add_offer_percentage' product_id=product_id %}" method="POST">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label>Product Name</label>
+                        {{ form.product_name }}
+                    </div> <!-- form-group end.// -->
+                    <div class="col form-group">
+                        <label>Product Price</label>
+                        {{ form.price }}
+                    </div> <!-- form-group end.// -->
+                </div> <!-- form-row end.// -->
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label>Offer Percentage</label>
+                        {{ form.offer_percentage }}
+                    </div> <!-- form-group end.// -->
+                    <div class="col form-group">
+                        <label>Offer Price</label>
+                        {{ form.offer_price }}
+                    </div> <!-- form-group end.// -->
+                </div> <!-- form-row end.// -->
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </article><!-- card-body.// -->
+    </div> <!-- card .// -->
+    <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var productSelect = document.getElementById('id_product_name');
+        productSelect.addEventListener('change', function() {
+            var selectedProductName = this.value;
+            // Assign the selected product name to the product_name field in the form
+            document.getElementById('id_product_name').value = selectedProductName;
+        });
+    });
+</script>
+{% endblock %}

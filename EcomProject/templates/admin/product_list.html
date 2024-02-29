@@ -1,0 +1,135 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}
+Product List
+{% endblock title %}
+
+{% block custom_css %}
+{% endblock custom_css %}
+
+{% block page_title %}
+Product List
+{% endblock page_title %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'product_add' %}" class="btn btn-success"> Add New Product <i
+                            class="fas fa-chevron"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="search-element">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="get">
+                            <button class="btn  btn-primary" type="submit" style="float:right"><i
+                                    class="fas fa-search"></i> Search
+                            </button>
+                            <input class="form-control" type="search" placeholder="Search" aria-label="Search"
+                                   data-width="250" style="width: 250px;float:right" name="filter" value="{{ filter }}">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+    <div class="container">
+        <div class="row">
+            {% include 'includes/sidebar-admin-dashboard.html' %}
+            <main class="col-md-10">
+                <article class="card">
+                    <div class="table-responsive">
+                        <div class="table-heading text-center font-weight-bold border-bottom mb-3 bg-info"
+                             style="font-size: 24px; line-height: 1.5;">Product Details
+                        </div>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                    <label>Sl. No.</label>
+                                </td>
+                                <td colspan="2" class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                    <label>Product Name</label>
+                                </td>
+                                <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                    <label>Category</label>
+                                </td>
+                                <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                    <label>Price</label>
+                                </td>
+                                <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                    <label>Stock</label>
+                                </td>
+                                <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                    <label>Status</label>
+                                </td>
+                                <td colspan="2" class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">
+                                    <label>Action</label>
+                                </td>
+                            </tr>
+                            </thead>
+                            {% for product in product_list %}
+                                {% if product.category.is_listed %}
+                                    <tr>
+                                        <td class="text-center">
+                                            <p class="title mb-0"> {{ forloop.counter }} </p>
+                                        </td>
+                                        <td width="65">
+                                            <img src="{{ product.product_image.url }}" class="img-xs border">
+                                        </td>
+                                        <td>
+                                            <p class="title mb-0"> {{ product.product_name }} </p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="title mb-0"> {{ product.category }} </p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="title mb-0"> {{ product.price }} </p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="title mb-0"> {{ product.stock }} </p>
+                                        </td>
+                                        <td class="text-center">
+                                            {% if product.is_available %}
+                                                <p class="title mb-0" style="color: green;"> Available </p>
+                                            {% else %}
+                                                <p class="title mb-0" style="color: red;"> Not Available </p>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{% url 'product_update' product.id %}"><i class="fas fa-pen" style="color: black;"></i></a>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{% url 'product_toggle_status' product.id %}">
+                                                {% if product.is_available %}
+                                                    <i class="fas fa-check" style="color: green;"
+                                                    onclick="return confirm('Are you sure you want to un list this Product?')"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times" style="color: red;"
+                                                    onclick="return confirm('Are you sure you want to list this Product?')"></i>
+                                                {% endif %}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </table>
+                    </div> <!-- table-responsive .end// -->
+                </article> <!-- order-group.// -->
+            </main>
+        </div> <!-- row.// -->
+    </div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock%}
+
+{% block custom_js %}
+{% endblock custom_js %}

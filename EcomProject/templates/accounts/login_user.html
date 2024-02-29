@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y" style="min-height:84vh">
+    <!-- ============================ COMPONENT LOGIN   ================================= -->
+    <div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
+        <div class="card-body">
+            <h4 class="card-title mb-4 text-center">Log in</h4>
+            {% include 'includes/alerts.html' %}
+            <form action="{% url 'login_user' %}" method="POST">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label>Phone Number</label>
+                        <input type="text" class="form-control" placeholder="Registered Phone Number" name="phone_number" required>
+                    </div> <!-- form-group end.// -->
+                    <div class="form-group col-md-12">
+                        <label>Email</label>
+                        <input type="email" class="form-control" placeholder="Registered Email" name="email" required>
+                    </div> <!-- form-group end.// -->
+                </div> <!-- form-row.// -->
+                    <div class="form-group">
+                        <a href="{% url 'forgot_password' %}" class="float-right">Forgot password?</a>
+                    </div> <!-- form-group form-check .// -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Request OTP</button>
+                </div> <!-- form-group// -->
+            </form>
+        </div> <!-- card-body.// -->
+    </div> <!-- card .// -->
+    <div class="d-flex justify-content-center mb-3 mb-lg-0">
+        <div class="widget-header">
+            <div>
+                <p class="text-center mt-4">Don't have account? <a href="{% url 'register' %}">Sign up</a></p>
+                <a href="{% url 'login_admin' %}">Official Login</a>
+            </div>
+        </div>
+    </div>
+    <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

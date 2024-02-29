@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+    {% include 'includes/alerts.html' %}
+    <div class="container">
+        <div class="row">
+            {% include 'includes/dashboard-sidebar.html' %}
+            <main class="col-md-9">
+                <article class="card">
+                    <header class="card-header">
+                        <strong class="d-inline-block mr-3">Your Order Details</strong>
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3" scope="col">Sl. No.</th>
+                                        <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3" scope="col">Order Number</th>
+                                        <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3" scope="col">Order Total</th>
+                                        <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3" scope="col">Order Status</th>
+                                        <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3" scope="col"> Order Date</th>
+                                        <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3" scope="col">Cancel Order</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td class="text-center">{{ forloop.counter }}</td>
+                                        <th class="text-center" scope="row"><a href="{% url 'order_detail' order.order_number %}">{{ order.order_number }}</a></th>
+                                        <td class="text-center">{{ order.order_total | floatformat:2 }}</td>
+                                        <td class="text-center">{{ order.status }}</td>
+                                        <td class="text-center">{{ order.created_at }}</td>
+                                        <td class="text-center">
+                                            <form action="{% url 'user_cancel_order' order.id %}" method="POST">
+                                            {% csrf_token %}
+                                                <button type="submit" onclick="return confirm('Are you sure you want to cancel this Order?')" {% if order.is_cancelled %}disabled{% endif %}>
+                                                    {% if order.status == 'Order Confirmed' %}<i class="fas fa-trash" style="color: red;"></i>{% else %}Cancelled{% endif %}
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- row.// -->
+                    </div> <!-- card-body .// -->
+                </article> <!-- order-group.// -->
+            </main>
+        </div> <!-- row.// -->
+    </div>
+
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

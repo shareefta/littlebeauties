@@ -1,0 +1,64 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}
+Add Product Offer
+{% endblock title %}
+
+{% block custom_css %}
+{% endblock custom_css %}
+
+{% block page_title %}
+Add Product Offer
+{% endblock page_title %}
+
+{% block content %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+
+    <!-- ============================ COMPONENT REGISTER   ================================= -->
+    <div class="card mx-auto" style="max-width:520px; margin-top:30px;">
+        <article class="card">
+            <header class="card-header">
+                <div class="table-heading text-center font-weight-bold border-bottom mb-1 bg-info"
+                             style="font-size: 24px; line-height: 1.5;">Add Offer to Products
+                        </div>
+            </header>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Sl. No.</th>
+                                <th colspan="2" class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Product Name</th>
+                                <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Prodcut Price</th>
+                                <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Add Offer</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for product in products %}
+                            <tr class="text-center">
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <a href="{{ product.get_url }}" class="img-wrap">
+                                        <img src="{{ product.product_image.url }}" style="width:50px; height:50px;">
+                                    </a>
+                                </td>
+                                <td>{{ product.product_name }}</td>
+                                <td>Rs. {{ product.price }}</td>
+                                <td>
+                                    <a href="{% url 'add_offer_percentage' product.id %}"><i class="fas fa-plus"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div> <!-- row.// -->
+            </div> <!-- card-body .// -->
+        </article> <!-- order-group.// -->
+    </div> <!-- card .// -->
+    <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock %}

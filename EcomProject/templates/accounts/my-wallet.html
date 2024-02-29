@@ -1,0 +1,38 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+    <div class="container">
+        <!-- ============================ COMPONENT 1 ================================= -->
+        <div class="row">
+            {% include 'includes/dashboard-sidebar.html' %}
+            <aside class="col-lg-3 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        {% include 'includes/alerts.html'%}
+                        <h5 class="text-center text-white bg-info" style="border-radius: 8px; padding: 10px;">My Wallet</h5>
+                            <dl class="dlist-align">
+                                <dt>Wallet Balance:</dt>
+                                <dd class="text-right text-dark b"><strong>₹ {{ user.wallet | floatformat:2 }}</strong></dd>
+                            </dl>
+                        <form action="{% url 'add_money_wallet' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <div class="col form-group">
+                                    <label class="card-title">Add money to Wallet</label>
+                                    <input type="text" name="amount" class="form-control" placeholder="Enter Amount" required>
+                                </div>
+                            </div>
+                            <button type="submit" name="submit" class="btn btn-primary btn-block">Add</button>
+                        </form>
+                    </div>
+                </div> <!-- card.// -->
+            </aside> <!-- col.// -->
+        </div> <!-- row.// -->
+        <!-- ============================ COMPONENT 1 END .// ================================= -->
+    </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock %}

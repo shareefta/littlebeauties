@@ -1,0 +1,17 @@
+<aside class="col-md-2 pt-3" style="background-color: aqua;">
+    <!--   SIDEBAR   -->
+    <ul class="list-group" style="list-style-type: none;">
+        <li><a class="list-group-item {% if '/dashboard_admin/' == request.path %}active{% endif %}" href="{% url 'dashboard_admin' %}">Dashboard</a></li>
+        <li><a class="list-group-item {% if '/category_list/' in request.path %}active{% endif %}" href="{% url 'category_list' %}"> Categories </a></li>
+        <li><a class="list-group-item {% if '/product_list/' in request.path %}active{% endif %}" href="{% url 'product_list' %}"> Products </a></li>
+        <li><a class="list-group-item {% if '/variant_list/' in request.path %}active{% endif %}" href="{% url 'variant_list' %}"> Variants </a></li>
+        <li><a class="list-group-item" href="{% url 'order_list' %}"> Orders </a></li>
+        <li><a class="list-group-item" href="{% url 'users_list' %}"> Users </a></li>
+        <li><a class="list-group-item" href="{% url 'orders:sales_report' %}"> Sales Report </a></li>
+        <li><a class="list-group-item" href="{% url 'product_offer_list' %}"> Product Offer </a></li>
+        <li><a class="list-group-item" href="{% url 'coupon_list' %}"> Coupon Offer </a></li>
+        <li><a class="btn btn-light btn-block" href="{% url 'logout_admin' %}"> <i class="fa fa-power-off"></i> <span
+            class="text">Log out</span> </a></li>
+    </ul>
+    <!--   SIDEBAR .//END   -->
+</aside>

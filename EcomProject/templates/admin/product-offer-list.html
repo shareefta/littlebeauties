@@ -1,0 +1,110 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}
+Product Offer List
+{% endblock title %}
+
+
+{% block custom_css %}
+{% endblock custom_css %}
+
+{% block page_title %}
+Product Offer List
+{% endblock page_title %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'add_product_offer' %}" class="btn btn-success"> Add Product Offer <i
+                            class="fas fa-chevron"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="search-element">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="get">
+                            <button class="btn  btn-primary" type="submit" style="float:right"><i
+                                    class="fas fa-search"></i> Search
+                            </button>
+                            <input class="form-control" type="search" placeholder="Search" aria-label="Search"
+                                   data-width="250" style="width: 250px;float:right" name="filter" value="{{ filter }}">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+    <div class="container">
+        <div class="row">
+            {% include 'includes/sidebar-admin-dashboard.html' %}
+            <main class="col-md-9">
+                <article class="card">
+                    <header class="card-header">
+                        <div class="table-heading text-center font-weight-bold border-bottom mb-1 bg-info"
+                             style="font-size: 24px; line-height: 1.5;">Product Offers
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">
+                                                <label>Sl. No.</label>
+                                            </td>
+                                            <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">
+                                                <label>Product Name</label>
+                                            </td>
+                                            <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">
+                                                <label>Prodcut Price</label>
+                                            </td>
+                                            <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">
+                                                <label>Offer %</label>
+                                            </td>
+                                            <td class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">
+                                                <label>Offer Price</label>
+                                            </td>
+                                            <td colspan="2" class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">
+                                                <label>Action</label>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product in offer_products %}
+                                        <tr>
+                                            <td class="text-center">{{ forloop.counter }}</td>
+                                            <td>{{ product.product_name }}</td>
+                                            <td class="text-center">Rs. {{ product.price }}</td>
+                                            <td class="text-center">{{ product.offer_percentage }}%</td>
+                                            <td class="text-center">Rs. {{ product.offer_price }}</td>
+                                            <td class="text-center">
+                                                <a href="{% url 'edit_product_offer' product.id %}"><i class="fas fa-pen" style="color: black;"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- row.// -->
+                    </div> <!-- card-body .// -->
+                </article> <!-- order-group.// -->
+            </main>
+        </div> <!-- row.// -->
+    </div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock%}
+
+
+{% block custom_js %}
+{% endblock custom_js %}

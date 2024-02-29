@@ -1,0 +1,12 @@
+<!-- custom_login.html -->
+{% extends 'admin/login.html' %}
+
+{% block content %}
+    {# Add your custom content here #}
+    <h2>Welcome to Custom Admin Login</h2>
+    <form method="post" action="{% url 'admin:login' %}" class="login-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Log in</button>
+    </form>
+{% endblock %}

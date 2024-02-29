@@ -1,0 +1,110 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}
+Users List
+{% endblock title %}
+
+
+{% block custom_css %}
+{% endblock custom_css %}
+
+{% block page_title %}
+Users List
+{% endblock page_title %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'add_coupon_offer' %}" class="btn btn-success"> Add Coupon Offer <i
+                            class="fas fa-chevron"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="search-element">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="get">
+                            <button class="btn  btn-primary" type="submit" style="float:right"><i
+                                    class="fas fa-search"></i> Search
+                            </button>
+                            <input class="form-control" type="search" placeholder="Search" aria-label="Search"
+                                   data-width="250" style="width: 250px;float:right" name="filter" value="{{ filter }}">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+    <div class="container">
+        <div class="row">
+            {% include 'includes/sidebar-admin-dashboard.html' %}
+            <main class="col-md-9">
+                <article class="card">
+                    <header class="card-header">
+                        <div class="table-heading text-center font-weight-bold border-bottom mb-1 bg-info"
+                             style="font-size: 24px; line-height: 1.5;">Coupon Offers
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Sl. No.</th>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Coupon Code</th>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Min. Purchase Amount</th>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Discount Amount</th>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Valid Till</th>
+                                            <td colspan="2" class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-1">Action</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for coupon in coupons %}
+                                            <tr>
+                                                <td class="text-center">{{ forloop.counter }}</td>
+                                                <td class="text-center">{{ coupon.coupon_code }}</td>
+                                                <td class="text-center">{{ coupon.minimum_amount }}</td>
+                                                <td class="text-center">{{ coupon.discount }}</td>
+                                                <td class="text-center">{{ coupon.valid_to|date:"d-m-Y" }}</td>
+                                                <td class="text-center">
+                                                    <a href="{% url 'edit_coupon_offer' coupon.id %}"><i class="fas fa-pen" style="color: black;"></i></a>
+                                                </td>
+                                                <td class="text-center">
+                                                    <a href="{% url 'coupon_toggle_status' coupon.id %}">
+                                                        {% if coupon.is_listed %}
+                                                            <i class="fas fa-check" style="color: green;"
+                                                            onclick="return confirm('Are you sure you want to un list this coupon?')"></i>
+                                                        {% else %}
+                                                            <i class="fas fa-times" style="color: red;"
+                                                            onclick="return confirm('Are you sure you want to list this coupon?')"></i>
+                                                        {% endif %}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- row.// -->
+                    </div> <!-- card-body .// -->
+                </article> <!-- order-group.// -->
+            </main>
+        </div> <!-- row.// -->
+    </div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock%}
+
+
+{% block custom_js %}
+
+{% endblock custom_js %}

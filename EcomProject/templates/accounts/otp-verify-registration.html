@@ -1,0 +1,39 @@
+{% extends 'base.html'%}
+
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y" style="min-height:84vh">
+
+    <!-- ============================ COMPONENT LOGIN   ================================= -->
+    <div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
+        <div class="card-body">
+            <h4 class="card-title mb-4">OTP Verification</h4>
+            {% include 'includes/alerts.html'%}
+            <form id="form1" action="{% url 'otp_verify' uid=uid %}" method="post">
+                {% csrf_token %}
+                <label for="otp">OTP</label>
+                <input id="otp" class="form-control" type="text" name="otp">
+                <br>
+                <input type="submit" class="form-control btn btn-primary" value="Activate">
+            </form>
+            <br>
+            <br>
+            <form method="post" action="">
+                {% csrf_token %}
+                <button id="resend" class="form-control btn btn-primary btn-sm" type="submit" name="resend_otp">Resend
+                    OTP
+                </button>
+            </form>
+        </div> <!-- card-body.// -->
+    </div> <!-- card .// -->
+
+
+    <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

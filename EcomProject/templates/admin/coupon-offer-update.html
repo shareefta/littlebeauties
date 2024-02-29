@@ -1,0 +1,69 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}
+Product Update
+{% endblock title %}
+
+
+{% block custom_css %}
+{% endblock custom_css %}
+
+{% block page_title %}
+Product Update
+{% endblock page_title %}
+
+{% block content %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+    <!-- ============================ COMPONENT REGISTER   ================================= -->
+    <div class="card mx-auto" style="max-width:520px; margin-top:30px;">
+        <article class="card-body">
+            {% include 'includes/alerts.html' %}
+            <header class="mb-4 bg-info"><h4 class="card-title text-center">Update Product Details</h4></header>
+            <form action="{% url 'edit_coupon_offer' coupon_id=coupon_id %}" method="POST"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        {{ form.coupon_code.label_tag }}
+                        {{ form.coupon_code }}
+                    </div> <!-- form-group end.// -->
+                </div> <!-- form-row.// -->
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        {{ form.description.label_tag }}
+                        {{ form.description }}
+                    </div> <!-- form-group end.// -->
+                </div> <!-- form-row.// -->
+                <div class="form-row">
+                    <div class="col form-group">
+                        {{ form.minimum_amount.label_tag }}
+                        {{ form.minimum_amount }}
+                    </div> <!-- form-group end.// -->
+                    <div class="col form-group">
+                        {{ form.discount.label_tag }}
+                        {{ form.discount }}
+                    </div> <!-- form-group end.// -->
+                </div> <!-- form-row end.// -->
+                <div class="form-row">
+                    <div class="col form-group">
+                        {{ form.valid_from.label_tag }}
+                        {{ form.valid_from }}
+                    </div> <!-- form-group end.// -->
+                    <div class="col form-group">
+                        {{ form.valid_to.label_tag }}
+                        {{ form.valid_to }}
+                    </div> <!-- form-group end.// -->
+                </div> <!-- form-row end.// -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Update</button>
+                </div> <!-- form-group// -->
+                {{ form.non_field_errors}}
+            </form>
+        </article><!-- card-body.// -->
+    </div> <!-- card .// -->
+    <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+</section>
+    {% endblock %}
+
+    {% block custom_js %}
+    {% endblock custom_js %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+    {% include 'includes/alerts.html' %}
+    <div class="container">
+        <div class="row">
+            {% include 'includes/dashboard-sidebar.html' %}
+            <main class="col-md-9">
+                <article class="card">
+                    <div class="table-heading text-center font-weight-bold border-bottom mb-3 bg-info"
+                         style="font-size: 24px; line-height: 1.5;">Coupon Details
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">Coupon Code</th>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">Min. Purchase Amount</th>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">Discount Amount</th>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">Valid Till</th>
+                                            <th class="table-heading text-center font-weight-bold bg-primary text-white border-bottom mb-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for coupon, status in coupon_data %}
+                                            {% if coupon.is_listed %}
+                                                <tr class="text-center">
+                                                    <td>{{ coupon.coupon_code }}</td>
+                                                    <td>{{ coupon.minimum_amount }}</td>
+                                                    <td>{{ coupon.discount }}</td>
+                                                    <td>{{ coupon.valid_to|date:"d-m-Y" }}</td>
+                                                    {% if status == "Active" %}
+                                                        <td style="color: green;">{{ status }}</td>
+                                                    {% else %}
+                                                        <td style="color: red;">{{ status }}</td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- row.// -->
+                    </div> <!-- card-body .// -->
+                </article> <!-- order-group.// -->
+            </main>
+        </div> <!-- row.// -->
+    </div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

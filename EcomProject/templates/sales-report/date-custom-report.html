@@ -1,0 +1,58 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}
+Custom Sales Report
+{% endblock title %}
+
+{% block custom_css %}
+{% endblock custom_css %}
+
+{% block page_title %}
+Custom Sales Report
+{% endblock page_title %}
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+    <div class="container">
+        <div class="row">
+            {% include 'includes/sidebar-admin-dashboard.html' %}
+            <main class="col-md-10">
+                <div class="row">
+                    <aside class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                {% include 'includes/alerts.html'%}
+                                <center><h4 class="card-title mb-4">Custom Sales Report</h4></center>
+                                <form action="{% url 'orders:custom_sales_report' %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-row">
+                                        <div class="col form-group">
+                                            <label>Starting date</label>
+                                            <input type="date" name="starting_date" class="form-control" required>
+                                        </div>
+                                        <div class="col form-group">
+                                            <label>Ending Date</label>
+                                            <input type="date" name="ending_date" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <button type="submit" name="submit" class="btn btn-primary btn-block">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div> <!-- card.// -->
+                    </aside> <!-- col.// -->
+                </div> <!-- card-body.// -->
+            </main>
+        </div> <!-- row.// -->
+    </div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock%}
+
+{% block custom_js %}
+
+
+{% endblock custom_js %}

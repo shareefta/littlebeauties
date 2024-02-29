@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js"></script>
+
+
+{% block content %}
+<h4 class="text-center mb-0">Review your order and Make payment</h4>
+<section class="section-content padding-y bg">
+    <div class="container">
+        <!-- ============================ COMPONENT 1 ================================= -->
+        <div class="row">
+            <aside class="col-md-8 mx-auto">
+                <div class="card">
+                    <form action="{% url 'orders:make_payments' order_id=order_id %}" method="POST">
+                        {% csrf_token %}
+                        <h5 class="card-header text-center">Billing Address</h5>
+                        <div class="card-body">
+                            <p class="card-text mb-0">{{ order_address.full_name }}</p>
+                            <p class="card-text mb-0">{{ order_address.full_address }}</p>
+                            <p class="card-text mb-0">{{ order_address.city }}, {{ order_address.state }}</p>
+                            <p class="card-text mb-0">{{ order_address.country }}</p>
+                            <p class="card-text mb-0">{{ order_address.phone_number }}</p>
+                        </div>
+                </div>
+                <div class="card">
+                    <h5 class="card-header text-center">Product Reviews</h5>
+                    <div class="card-body">
+                        <p class="card-text"></p>
+                        <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted">
+                            <tr class="small text-uppercase">
+                                <th scope="col">Product</th>
+                                <th scope="col" width="120">Quantity</th>
+                                <th scope="col" width="120">Price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for cart_item in cart_items %}
+                            <tr>
+                                <td>
+                                    <figure class="itemside align-items-center">
+                                        <div class="aside"><img src="{{ cart_item.product.product_image.url }}"
+                                                                class="img-sm">
+                                        </div>
+                                        <figcaption class="info">
+                                            <a href="{{ cart_item.product.get_url }}" class="title text-dark">
+                                                {{ cart_item.product.product_name }}</a>
+                                            <p class="text-muted small">
+                                                {% if cart_item.variant.all %}
+                                                    {% for item in cart_item.variant.all %}
+                                                        {{ item.variant_category | capfirst }}: {{ item.variant_value | capfirst }} <br>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </p>
+                                        </figcaption>
+                                    </figure>
+                                </td>
+                                <td>
+                                    <label>{{ cart_item.quantity }}</label>
+                                </td>
+                                <td>
+                                    {% if cart_item.product.offer_percentage > 0 %}
+                                        <div class="price-wrap">
+                                            <var class="price">₹ {{ cart_item.sub_total_offer }} </var>
+                                            <small class="text-muted"> ₹ {{ cart_item.product.offer_price }} each </small>
+                                        </div> <!-- price-wrap .// -->
+                                    {% else %}
+                                        <div class="price-wrap">
+                                            <var class="price">₹ {{ cart_item.sub_total }} </var>
+                                            <small class="text-muted"> ₹ {{ cart_item.product.price }} each </small>
+                                        </div> <!-- price-wrap .// -->
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </aside> <!-- col.// -->
+            <aside class="col-md-3 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="text-center text-white bg-warning" style="border-radius: 8px; padding: 10px;"> Order
+                            Summary </h5>
+                        <dl class="dlist-align">
+                            <dt>Sub Total:</dt>
+                            <dd class="text-right">₹  {{ sub_total | floatformat:2 }}</dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt>Tax:</dt>
+                            <dd class="text-right"> ₹ {{ tax | floatformat:2 }}</dd>
+                        </dl>
+                        {% if total %}
+                            <dl class="dlist-align">
+                                <dt>Total:</dt>
+                                <dd class="text-right"> ₹ {{ total | floatformat:2 }}</dd>
+                            </dl>
+                        {% endif %}
+                        {% if coupon_discount %}
+                            <dl class="dlist-align">
+                                <dt>Coupon Discount</dt>
+                                <dd class="text-right">- ₹ {{ coupon_discount | floatformat:2 }}</dd>
+                            </dl>
+                        {% endif %}
+                        <dl class="dlist-align">
+                            <dt>Grand Total:</dt>
+                            <dd class="text-right text-dark b"><strong>₹ {{ grand_total | floatformat:2 }}</strong></dd>
+                        </dl>
+                        {% if coupon_discount > 0 and product_discount > 0 %}
+                            <hr>
+                            <br>
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="discountDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                You have saved! <strong>₹ {{ total_discount | floatformat:2 }}</strong>
+                            </button>
+                            <br>
+                            <div class="dropdown-menu" aria-labelledby="discountDropdown">
+                                <a class="dropdown-item" href="#">Coupon Discount: ₹{{ coupon_discount | floatformat:2 }}</a>
+                                <a class="dropdown-item" href="#">Product Discount: ₹{{ product_discount | floatformat:2 }}</a>
+                            </div>
+                        {% elif coupon_discount > 0 %}
+                            <hr>
+                            <p class="text-center">You have saved! <strong>₹ {{ coupon_discount | floatformat:2 }}</strong></p>
+                        {% elif product_discount > 0 %}
+                            <hr>
+                            <p class="text-center">You have saved! <strong>₹ {{ product_discount | floatformat:2 }}</strong></p>
+                        {% endif %}
+                        <h5 class="text-center text-white bg-warning" style="border-radius: 8px; padding: 10px;">Select
+                            Payment Method</h5>
+                        <dl class="dlist-align">
+                            <dt><input type="radio" name="paymentMethod" value="Wallet" required> Wallet </dt>
+                            <dd class="text-right">{{ wallet | floatformat:2 }}</dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt><input type="radio" name="paymentMethod" value="CashOnDelivery"> Cash On
+                                Delivery
+                            </dt>
+                            <dd class="text-right"></dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt><input type="radio" name="paymentMethod" value="PayPal"> PayPal</dt>
+                            <dd class="text-right"></dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt><input type="radio" name="paymentMethod"> Debit/Credit Card</dt>
+                            <dd class="text-right"></dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt><input type="radio" name="paymentMethod"> UPI Payment</dt>
+                            <dd class="text-right"></dd>
+                        </dl>
+                        <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+                        </form>
+                        <div>
+                        {% for coupon, status in coupon_data %}
+                            {% if status == "Active" and coupon.is_listed %}
+                            <label>Available Coupons:</label>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="couponDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Select Coupon
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="couponDropdown">
+                                    <a class="dropdown-item" href="{% url 'orders:apply_coupon' order_id=order.id coupon_id=coupon.id %}">
+                                        {{ coupon.coupon_code }} - ₹ {{ coupon.discount }} off
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div> <!-- card-body.// -->
+                </div> <!-- card.// -->
+            </aside> <!-- col.// -->
+        </div> <!-- row.// -->
+        <!-- ============================ COMPONENT 1 END .// ================================= -->
+    </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+<script>
+    $(document).ready(function () {
+        // Close dropdown on click outside
+        $(document).click(function (event) {
+            var clickover = $(event.target);
+            var $navbar = $(".navbar-collapse");
+            var _opened = $navbar.hasClass("in");
+            if (_opened === true && !clickover.hasClass("navbar-toggle")) {
+                $navbar.collapse('hide');
+            }
+        });
+
+        // Prevent dropdown menu from closing on click inside
+        $(".dropdown-menu").click(function (e) {
+            e.stopPropagation();
+        });
+    });
+</script>
+
+{% endblock %}

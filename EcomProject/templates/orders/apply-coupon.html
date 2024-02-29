@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+    <div class="container">
+        <!-- ============================ COMPONENT 1 ================================= -->
+        <h4 class="text-center mb-10">Apply Coupon and Place Order</h4>
+        <div class="row">
+            <aside class="col-lg-4">
+                {% include 'includes/alerts.html' %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="text-center text-white bg-warning" style="border-radius: 8px; padding: 10px;"> Order
+                            Summary </h5>
+                        <dl class="dlist-align">
+                            <dt>Total Price:</dt>
+                            <dd class="text-right">Rs. {{ order_total | floatformat:2 }}</dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt>Tax:</dt>
+                            <dd class="text-right"> Rs. {{ tax | floatformat:2 }}</dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt>Grand Total:</dt>
+                            <dd class="text-right text-dark b"><strong>Rs. {{ grand_total | floatformat:2 }}</strong></dd>
+                        </dl>
+<!--                        <button type="submit" class="btn btn-primary btn-block">Place Order</button>-->
+                        <!--Coupon Section-->
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="POST" action="{% url 'orders:apply_coupon' order_id=order.id %}">
+                                    {% csrf_token %}
+                                    <div class="coupon-section">
+                                        <h6>Apply Coupon</h6>
+                                        <div class="coupon-form-wrap">
+                                            <p><input type="text" name="coupon_code" class="form-control" placeholder="Enter your Coupon Code"></p>
+                                            <button type="submit" class="btn btn-primary">Apply Coupon and Place Order</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div> <!-- card-body.// -->
+                </div> <!-- card.// -->
+            </aside> <!-- col.// -->
+            <main class="col-md-8">
+                <article class="card">
+                    <header class="card-header">
+                        <strong class="d-inline-block mr-3">Coupon Details</strong>
+                    </header>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Coupon Code</th>
+                                            <th scope="col">Min. Purchase Amount</th>
+                                            <th scope="col">Discount Amount</th>
+                                            <th scope="col">Valid Till</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for coupon, status in coupon_data %}
+                                        <tr>
+                                            <td>{{ coupon.coupon_code }}</td>
+                                            <td>{{ coupon.minimum_amount }}</td>
+                                            <td>{{ coupon.discount }}</td>
+                                            <td>{{ coupon.valid_to|date:"d-m-Y" }}</td>
+                                            <td>{{ status }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- row.// -->
+                    </div> <!-- card-body .// -->
+                </article> <!-- order-group.// -->
+            </main>
+        </div> <!-- row.// -->
+        <!-- ============================ COMPONENT 1 END .// ================================= -->
+    </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}
