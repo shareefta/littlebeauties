@@ -72,15 +72,22 @@
                                 </div> <!-- col.// -->
                             </td>
                             <td>
-                                {% if cart_item.product.offer_percentage > 0 %}
-                                    <div class="price-wrap">
-                                        <var class="price">Rs. {{ cart_item.sub_total_offer }} </var>
-                                        <small class="badge bg-danger text-white h2 py-2">{{ cart_item.product.offer_percentage }}% off</small>
-                                        <br>
-                                        <small class="text-muted"> Rs. {{ cart_item.product.offer_price }} each </small>
-                                        <br>
-                                        <small class="text-muted">M.R.P.: Rs. <del>{{ cart_item.product.price }}</del></small>
-                                    </div> <!-- price-wrap .// -->
+                                {% if cart_item.product.is_listed_offer %}
+                                    {% if cart_item.product.offer_percentage > 0 %}
+                                        <div class="price-wrap">
+                                            <var class="price">Rs. {{ cart_item.sub_total_offer }} </var>
+                                            <small class="badge bg-danger text-white h2 py-2">{{ cart_item.product.offer_percentage }}% off</small>
+                                            <br>
+                                            <small class="text-muted"> Rs. {{ cart_item.product.offer_price }} each </small>
+                                            <br>
+                                            <small class="text-muted">M.R.P.: Rs. <del>{{ cart_item.product.price }}</del></small>
+                                        </div> <!-- price-wrap .// -->
+                                    {% else %}
+                                        <div class="price-wrap">
+                                            <var class="price">Rs. {{ cart_item.sub_total }} </var>
+                                            <small class="text-muted"> Rs. {{ cart_item.product.price }} each </small>
+                                        </div> <!-- price-wrap .// -->
+                                    {% endif %}
                                 {% else %}
                                     <div class="price-wrap">
                                         <var class="price">Rs. {{ cart_item.sub_total }} </var>

@@ -1,5 +1,6 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
+import uuid
 
 urlpatterns = [
 
@@ -52,10 +53,12 @@ urlpatterns = [
     path('add_offer_percentage/<int:product_id>/', views.add_offer_percentage, name='add_offer_percentage'),
     path('edit_product_offer/<int:product_id>/', views.edit_product_offer, name='edit_product_offer'),
     path('delete_product_offer/<int:product_id>/', views.delete_product_offer, name='delete_product_offer'),
+    path('offer_toggle_status/<int:product_id>/', views.offer_toggle_status, name='offer_toggle_status'),
 
     #USER DASHBOARD
     path('login_user',views.login_user, name='login_user'),
-    path('otp_verify_login/<str:uid>/', views.otp_verify_login, name='otp_verify_login'),
+    re_path(r'^otp_verify_login/(?P<uid>[0-9a-f-]+)/$', views.otp_verify_login, name='otp_verify_login'),
+    # path('otp_verify_login/<uuid:uid>/', views.otp_verify_login, name='otp_verify_login'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('logout_user/', views.logout_user, name="logout_user"),
     path('my_orders/', views.my_orders, name='my_orders'),

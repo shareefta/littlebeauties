@@ -22,6 +22,7 @@ class Product(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
     offer_percentage = models.PositiveIntegerField(default=0, blank=True, null=True)
     offer_price = models.PositiveIntegerField(default=0, blank=True, null=True)
+    is_listed_offer = models.BooleanField(default=True)
 
     def get_url(self):
         return reverse('product_detail',args=[self.category.slug, self.slug])

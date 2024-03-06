@@ -154,23 +154,23 @@
                         </dl>
                         <button type="submit" class="btn btn-primary btn-block">Place Order</button>
                         </form>
-                        <div>
-                        {% for coupon, status in coupon_data %}
-                            {% if status == "Active" and coupon.is_listed %}
-                            <label>Available Coupons:</label>
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="couponDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Select Coupon
+                        {% if coupon_amount > 0 %}
+                            <hr>
+                            <div class="card-body text-white" style="background: linear-gradient(to right, #cc2b5e, #753a88); border-radius: 10px; border: none;">
+                                <h6 class="text-center">Coupon Offer:</h6>
+                                <dl class="dlist-align">
+                                    <dt>Coupon Code:</dt>
+                                    <dd class="text-right">{{ code }}</dd>
+                                </dl>
+                                <dl class="dlist-align">
+                                    <dt>Coupon Amount:</dt>
+                                    <dd class="text-right">₹ {{ coupon_amount }}</dd>
+                                </dl>
+                                <button class="btn btn-primary btn-block">
+                                    <a class="text-white text-center" href="{% url 'orders:apply_coupon' order_id=order.id coupon_id=coupon_id %}">Apply</a>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="couponDropdown">
-                                    <a class="dropdown-item" href="{% url 'orders:apply_coupon' order_id=order.id coupon_id=coupon.id %}">
-                                        {{ coupon.coupon_code }} - ₹ {{ coupon.discount }} off
-                                    </a>
-                                </div>
                             </div>
-                            {% endif %}
-                        {% endfor %}
-                        </div>
+                        {% endif %}
                     </div> <!-- card-body.// -->
                 </div> <!-- card.// -->
             </aside> <!-- col.// -->

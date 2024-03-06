@@ -32,12 +32,16 @@ def cart(request, total=0, quantity=0, cart_items=None):
         total_discount = 0
 
         for cart_item in cart_items:
-            if cart_item.product.offer_percentage > 0:
-                discount_price = (cart_item.product.offer_percentage * cart_item.product.price) / 100
-                total_discount += discount_price * cart_item.quantity
-                cart_item.product.offer_price = cart_item.product.price - discount_price
-                total += (cart_item.product.offer_price * cart_item.quantity)
-                quantity += cart_item.quantity
+            if cart_item.product.is_listed_offer:
+                if cart_item.product.offer_percentage > 0:
+                    discount_price = (cart_item.product.offer_percentage * cart_item.product.price) / 100
+                    total_discount += discount_price * cart_item.quantity
+                    cart_item.product.offer_price = cart_item.product.price - discount_price
+                    total += (cart_item.product.offer_price * cart_item.quantity)
+                    quantity += cart_item.quantity
+                else:
+                    total += (cart_item.product.price * cart_item.quantity)
+                    quantity += cart_item.quantity
             else:
                 total += (cart_item.product.price * cart_item.quantity)
                 quantity += cart_item.quantity
@@ -204,12 +208,16 @@ def checkout(request, total=0, quantity=0, cart_items=None):
         total_discount = 0
 
         for cart_item in cart_items:
-            if cart_item.product.offer_percentage > 0:
-                discount_price = (cart_item.product.offer_percentage * cart_item.product.price) / 100
-                total_discount += discount_price * cart_item.quantity
-                cart_item.product.offer_price = cart_item.product.price - discount_price
-                total += (cart_item.product.offer_price * cart_item.quantity)
-                quantity += cart_item.quantity
+            if cart_item.product.is_listed_offer:
+                if cart_item.product.offer_percentage > 0:
+                    discount_price = (cart_item.product.offer_percentage * cart_item.product.price) / 100
+                    total_discount += discount_price * cart_item.quantity
+                    cart_item.product.offer_price = cart_item.product.price - discount_price
+                    total += (cart_item.product.offer_price * cart_item.quantity)
+                    quantity += cart_item.quantity
+                else:
+                    total += (cart_item.product.price * cart_item.quantity)
+                    quantity += cart_item.quantity
             else:
                 total += (cart_item.product.price * cart_item.quantity)
                 quantity += cart_item.quantity
@@ -224,8 +232,6 @@ def checkout(request, total=0, quantity=0, cart_items=None):
 
     current_user = request.user
     user_addresses = Address.objects.filter(user=current_user)
-
-
 
     if request.method == 'POST':
         # User selected an existing address

@@ -63,7 +63,7 @@ class VariantForm(forms.ModelForm):
     def clean_variant_value(self):
         variant_value = self.cleaned_data.get('variant_value')
         if not variant_value or variant_value.isspace():
-            raise forms.ValidationError("Description cannot be empty or contain only white spaces.")
+            raise forms.ValidationError("Value cannot be empty or contain only white spaces.")
         return variant_value.strip()
 
 class ProductOfferForm(forms.ModelForm):

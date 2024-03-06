@@ -65,13 +65,19 @@
                                         <figcaption class="info-wrap">
                                             <div class="fix-height">
                                                 <a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
-                                                {% if product.offer_percentage > 0 %}
-                                                    <div class="price-wrap mt-2">
-                                                        <span class="badge bg-danger text-white h2 py-2">{{ product.offer_percentage }}% off</span>
-                                                        <span class="price h4 font-weight-bold text-primary">Rs. {{ product.offer_price }}</span>
-                                                        <br>
-                                                        <del class="price-old h6 text-muted">Rs. {{ product.price }}</del>
-                                                    </div> <!-- price-wrap.// -->
+                                                {% if product.is_listed_offer %}
+                                                    {% if product.offer_percentage > 0 %}
+                                                        <div class="price-wrap mt-2">
+                                                            <span class="badge bg-danger text-white h2 py-2">{{ product.offer_percentage }}% off</span>
+                                                            <span class="price h4 font-weight-bold text-primary">Rs. {{ product.offer_price }}</span>
+                                                            <br>
+                                                            <del class="price-old h6 text-muted">Rs. {{ product.price }}</del>
+                                                        </div> <!-- price-wrap.// -->
+                                                    {% else %}
+                                                        <div class="price-wrap mt-2">
+                                                            <span class="price">Rs. {{ product.price }}</span>
+                                                        </div> <!-- price-wrap.// -->
+                                                    {% endif %}
                                                 {% else %}
                                                     <div class="price-wrap mt-2">
                                                         <span class="price">Rs. {{ product.price }}</span>

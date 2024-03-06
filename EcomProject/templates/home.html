@@ -23,30 +23,34 @@
 	<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
 	<h3 class="section-title">Popular products</h3>
 </header><!-- sect-heading -->
-
-
 <div class="row">
 	{% for product in products %}
 		{% if product.category.is_listed %}
-			<div class="col-md-3">
-				<div class="card card-product-grid">
-					<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{ product.product_image.url }}"> </a>
-					<figcaption class="info-wrap">
-						<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
-						{% if product.offer_percentage > 0 %}
-							<div class="price-wrap mt-2">
-								<span class="price">{{ product.offer_percentage }}% off</span>
-								<span class="price">Rs. {{ product.offer_price }}</span>
-								<del class="price-old">Rs. {{ product.price }}</del>
-							</div> <!-- price-wrap.// -->
-						{% else %}
-							<div class="price-wrap mt-2">
-								<span class="price">Rs. {{ product.price }}</span>
-							</div> <!-- price-wrap.// -->
-						{% endif %}
-					</figcaption>
-				</div>
-			</div> <!-- col.// -->
+				<div class="col-md-3">
+					<div class="card card-product-grid">
+						<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{ product.product_image.url }}"> </a>
+						<figcaption class="info-wrap">
+							<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
+							{% if product.is_listed_offer %}
+								{% if product.offer_percentage > 0 %}
+									<div class="price-wrap mt-2">
+										<span class="price">{{ product.offer_percentage }}% off</span>
+										<span class="price">Rs. {{ product.offer_price }}</span>
+										<del class="price-old">Rs. {{ product.price }}</del>
+									</div> <!-- price-wrap.// -->
+								{% else %}
+									<div class="price-wrap mt-2">
+										<span class="price">Rs. {{ product.price }}</span>
+									</div> <!-- price-wrap.// -->
+								{% endif %}
+							{% else %}
+								<div class="price-wrap mt-2">
+									<span class="price">Rs. {{ product.price }}</span>
+								</div> <!-- price-wrap.// -->
+							{% endif %}
+						</figcaption>
+					</div>
+				</div> <!-- col.// -->
 		{% endif %}
 	{% endfor %}
 

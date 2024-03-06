@@ -1,0 +1,147 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+	.custom-card {
+		border: none;
+		border-radius: 10px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		height: 100px;
+		overflow: hidden;
+	}
+	.font-style {
+		font-family: sans-serif;
+		font-size: 24px;
+		font-weight: bold;
+		line-height: 1.5;
+	}
+    .gradient-primary {
+        background: linear-gradient(to right, #4e73df, #224abe);
+    }
+</style>
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+	<div class="container">
+		<div class="row">
+			<main class="col-md-12">
+				<article class="card">
+					<div class="card-body" style="background: linear-gradient(to right, #cc2b5e, #753a88); border-radius: 20px;">
+						<div class="row">
+							<div class="col-md-2">
+								<div class="card custom-card text-center text-white" style="background: linear-gradient(to right, #FBB03B, #D4145A); height: 75px;">
+									<h5 class="card-title">Net Sales</h5>
+									<h4 style="font-weight: bold;">₹ {{ total_order_amount|floatformat:2 }}</h4>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="card custom-card text-center text-white" style="background: linear-gradient(to right, #D4145A, #FBB03B); height: 75px;">
+									<h5 class="card-title">Orders</h5>
+									<h4 style="font-weight: bold;">{{ orders_count }}</h4>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="card custom-card text-center text-white" style="background: linear-gradient(to right, #FBB03B, #D4145A); height: 75px;">
+									<h5 class="card-title">Users</h5>
+									<h4 style="font-weight: bold;">{{ users_count }}</h4>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="card custom-card text-center text-white" style="background: linear-gradient(to right, #D4145A, #FBB03B); height: 75px;">
+									<h5 class="card-title">Categories</h5>
+									<h4 style="font-weight: bold;">{{ categories_count }}</h4>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="card custom-card text-center text-white" style="background: linear-gradient(to right, #FBB03B, #D4145A); height: 75px;">
+									<h5 class="card-title">Products</h5>
+									<h4 style="font-weight: bold;">{{ products_count }}</h4>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="card custom-card text-center text-white" style="background: linear-gradient(to right, #D4145A, #FBB03B); height: 75px;">
+									<h5 class="card-title">Coupons</h5>
+									<h4 style="font-weight: bold;">{{ coupons_count }}</h4>
+								</div>
+							</div>
+						</div>
+					</div>
+				</article>
+			</main>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<main class="col-md-12">
+				<article class="card">
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-3 mb-5 mt-5">
+							<div class="card custom-card" style="background: linear-gradient(to right, #2193b0, #6dd5ed);">
+								<div class="card-body d-flex align-items-center justify-content-center">
+									<a class="text-white" href="{% url 'category_list' %}">
+										<h4 class="card-title font-style">Categories</h4>
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 mb-5 mt-5">
+							<div class="card custom-card" style="background: linear-gradient(to right, #cc2b5e, #753a88);">
+								<div class="card-body d-flex align-items-center justify-content-center">
+									<a class="text-white" href="{% url 'product_list' %}"><h4 class="card-title font-style">Products</h4></a>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 mb-5 mt-5">
+							<div class="card custom-card" style="background: linear-gradient(to right, #2E3192, #1BFFFF);">
+								<div class="card-body d-flex align-items-center justify-content-center">
+									<a class="text-white" href="{% url 'variant_list' %}"><h4 class="card-title font-style">Variants</h4></a>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 mb-5 mt-5">
+							<div class="card custom-card" style="background: linear-gradient(to right, #D4145A, #FBB03B);">
+								<div class="card-body d-flex align-items-center justify-content-center">
+									<a class="text-white" href="{% url 'order_list' %}"><h4 class="card-title font-style">Orders</h4></a>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 mb-5">
+							<div class="card custom-card" style="background: linear-gradient(to right, #FF61D2, #FE9090);">
+								<div class="card-body d-flex align-items-center justify-content-center">
+									<a class="text-white" href="{% url 'users_list' %}"><h4 class="card-title font-style">Users</h4></a>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 mb-5">
+							<div class="card custom-card" style="background: linear-gradient(to right, #7b4397, #dc2430);">
+								<div class="card-body d-flex align-items-center justify-content-center">
+									<a href="{% url 'orders:sales_report' %}"><h4 class="card-title text-white font-style">Sales Reports</h4></a>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 mb-5">
+							<div class="card custom-card" style="background: linear-gradient(to right, #42275a, #734b6d);">
+								<div class="card-body d-flex align-items-center justify-content-center">
+									<a href="{% url 'product_offer_list' %}"><h4 class="card-title text-white font-style">Product Offers</h4></a>
+<!--									<a class="text-white" href="{% url 'coupon_list' %}"> {{ coupons_count }}</a>-->
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 mb-5">
+							<div class="card custom-card" style="background: linear-gradient(to right, #ff9a9e, #fecfef);">
+								<div class="card-body d-flex align-items-center justify-content-center">
+									<a href="{% url 'coupon_list' %}"><h4 class="card-title text-white font-style">Coupons</h4></a>
+<!--									<a class="text-white" href="{% url 'coupon_list' %}"> {{ coupons_count }}</a>-->
+								</div>
+							</div>
+						</div>
+					</div> <!-- row.// -->
+				</div> <!-- card-body .// -->
+				</article> <!-- order-group.// -->
+			</main>
+		</div> <!-- row.// -->
+	</div>
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock %}

@@ -135,14 +135,17 @@ def place_order(request, quantity=0, sub_total=0):
         current_time = timezone.localtime(timezone.now())
         valid_coupons = [coupon for coupon in coupons if coupon.valid_from <= current_time <= coupon.valid_to]
 
-        coupon_statuses = []
-        for coupon in valid_coupons:
-            if order.order_total >= coupon.minimum_amount and not coupon.is_used_by_user(request.user):
-                coupon_statuses.append("Active")
-            else:
-                coupon_statuses.append("Used")
+        coupon_id = 0
+        coupon_amount = 0
+        code = ''
 
-        coupon_data = zip(valid_coupons, coupon_statuses)
+        for coupon in valid_coupons:
+            if coupon.is_listed:
+                if order.order_total >= coupon.minimum_amount and not coupon.is_used_by_user(request.user):
+                    if coupon.discount > coupon_amount:
+                        coupon_amount = coupon.discount
+                        code = coupon.coupon_code
+                        coupon_id = coupon.id
 
         context = {
             'order_address': order_address,
@@ -153,8 +156,10 @@ def place_order(request, quantity=0, sub_total=0):
             'grand_total': grand_total,
             'product_discount': product_discount,
             'order_id': order.id,
-            'coupon_data': coupon_data,
             'wallet': wallet,
+            'coupon_amount': coupon_amount,
+            'code': code,
+            'coupon_id': coupon_id,
         }
         return render(request, 'orders/place-order.html', context)
     else:
@@ -512,7 +517,6 @@ def order_detail_admin(request, order_id):
 
 from datetime import datetime, timedelta
 
-
 @login_required(login_url='login_admin')
 def sales_report(request):
     # Calculate the start and end of the current day
@@ -669,10 +673,6 @@ def custom_sales_report(request):
 @login_required(login_url='login_admin')
 def sales_report_pdf(request):
     buf = io.BytesIO()
-    # create SimpleDocTemplate
-    doc = SimpleDocTemplate(buf, pagesize=A5, rightMargin=15, leftMargin=15, topMargin=15, bottomMargin=15)
-    # create a table
-    data = []
 
     current_date = datetime.now()
     start_of_day = current_date.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -681,6 +681,13 @@ def sales_report_pdf(request):
     # Filter ShippingAddress objects for the current day
     shipping_addresses = ShippingAddress.objects.filter(order__created_at__range=[start_of_day, end_of_day]) \
         .order_by('-order__created_at')
+
+    # Create SimpleDocTemplate with title
+    title = f"Sales Report - {current_date}"
+    doc = SimpleDocTemplate(buf, pagesize=A5, rightMargin=15, leftMargin=15, topMargin=15, bottomMargin=15, title=title)
+
+    # create a table
+    data = []
 
     # Add table headers
     table_headers = ['Sl. No.', 'Order Number', 'Name', 'Amount Paid', 'Status']

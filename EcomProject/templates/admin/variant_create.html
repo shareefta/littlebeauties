@@ -23,7 +23,7 @@ Variant Create
             <form action="{% url 'variant_add' %}" method="POST">
                 {% csrf_token %}
                 <div class="form-row">
-                    <div class="col form-group">
+                    <div class="form-group">
                         <label>Select Product</label>
                         {{ form.product }}
                     </div> <!-- form-group end.// -->

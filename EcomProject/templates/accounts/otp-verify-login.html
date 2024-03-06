@@ -10,17 +10,19 @@
         <div class="card-body">
             <h4 class="card-title mb-4 text-center">OTP VERIFICATION</h4>
             {% include 'includes/alerts.html' %}
-            <form action="{% url 'otp_verify_login' uid=uid %}" method="POST">
+            <form action="{% url 'otp_verify_login' uid=uid %}" method="POST" id="otpForm">
                 {% csrf_token %}
                 <div class="form-row">
                     <div class="form-group col-md-12">
                         <label>OTP</label>
                         <input type="text" class="form-control" placeholder="Enter OTP" name="otp" required>
-                    </div> <!-- form-group end.// -->
-                </div> <!-- form-row.// -->
+                    </div>
+                </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary btn-block">Login</button>
-                </div> <!-- form-group// -->
+<!--                    <button type="button" class="btn btn-secondary btn-block" id="resendOTP">Resend OTP</button>-->
+                </div>
+<!--                <input type="hidden" name="resend" id="resend" value="False">-->
             </form>
         </div> <!-- card-body.// -->
     </div> <!-- card .// -->
@@ -35,17 +37,10 @@
     <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
-
+<!--<script>-->
+<!--    document.getElementById('resendOTP').addEventListener('click', function () {-->
+<!--        document.getElementById('resend').value = 'True';-->
+<!--        document.getElementById('otpForm').submit();-->
+<!--    });-->
+<!--</script>-->
 {% endblock %}
-
-<!--    {% block includes %}-->
-<!--    <form action="{% url 'otp' uid=uid %}" method="post">-->
-<!--        {% csrf_token %}-->
-<!--        <h2>OTP VERIFICATION:</h2>-->
-<!--        {% csrf_token %}-->
-<!--        <label for="otp">OTP:         </label>-->
-<!--        <input id="otp" type="text" name="otp">-->
-<!--        <input type="submit" value="login">-->
-<!--    </form>-->
-<!--    {% endblock includes %}-->
-

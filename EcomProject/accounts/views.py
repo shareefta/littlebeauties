@@ -1,5 +1,6 @@
 import secrets
 
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.crypto import get_random_string
@@ -24,6 +25,7 @@ from orders.forms import ChangeStatusForm
 import requests
 
 from carts.forms import CouponForm
+import datetime
 
 
 # Create your views here.
@@ -44,6 +46,10 @@ def register(request):
             user = Account.objects.create_user(first_name=first_name, last_name=last_name, phone_number=phone_number, email=email,
                                                password=password)
             user.save()
+
+            # Create a Profile instance
+            profile = Profile.objects.create(user=user)
+            profile.save()
 
             # # user activation
             # otp = ''.join(secrets.choice('0123456789') for _ in range(4))
@@ -123,33 +129,31 @@ def login_user(request):
         }
         request.session['user_details'] = user_details
         messagehandler = MessageHandler(profile.user.phone_number, otp).send_otp_via_message()
-        red = redirect('otp_verify_login', uid=str(profile.uid))
+        uid = str(uuid.uuid4())
+        red = redirect('otp_verify_login', uid=uid)
         red.set_cookie("can_otp_enter", True, max_age=60)
         return red
     return render(request, 'accounts/login_user.html')
 
 def otp_verify_login(request, uid):
+    uid = str(uid)
     if request.method == "POST":
         try:
             profile = Profile.objects.get(otp=request.POST['otp'])
-        except:
-            messages.error(request, 'You have entered wrong OTP.Try again')
-            return redirect(request.path)
-        if request.COOKIES.get('can_otp_enter') != None:
-            if profile.otp == request.POST['otp']:
+            if request.COOKIES.get('can_otp_enter') != None:
                 if profile.user is not None:
                     try:
                         cart = Cart.objects.get(cart_id=_cart_id(request))
                         is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
                         if is_cart_item_exists:
                             cart_items = CartItem.objects.filter(cart=cart)
-                            #Getting the product variants by cart id
+                            # Getting the product variants by cart id
                             product_variant = []
                             for cart_item in cart_items:
                                 variant = cart_item.variant.all()
                                 product_variant.append(list(variant))
 
-                            #Get the cart items from the user to access his product variants
+                            # Get the cart items from the user to access his product variants
                             cart_items = CartItem.objects.filter(user=profile.user)
                             ex_variant_list = []
                             id = []
@@ -184,11 +188,10 @@ def otp_verify_login(request, uid):
                     request.session['profile'] = profile
                     return render(request, 'home.html', {'profile': profile})
                 return redirect('login_user')
-            else:
-                messages.error(request, 'You have entered wrong OTP.Try again')
-                return redirect(request.path)
-        messages.error(request, '60 seconds over.Try again')
-        return redirect(request.path)
+            messages.error(request, '60 seconds over.Try again')
+            return redirect('login_user')
+        except:
+            messages.error(request, 'You have entered wrong OTP.Try again')
     return render(request, "accounts/otp-verify-login.html", {'uid': uid})
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -216,6 +219,7 @@ def login_admin(request):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def logout_admin(request):
     auth.logout(request)
     messages.success(request, 'Lougout Successful')
@@ -232,19 +236,67 @@ def dashboard(request):
     }
     return render(request, 'accounts/dashboard.html', context)
 
+from datetime import date
+from django.utils import timezone
+from datetime import datetime, timedelta
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@login_required(login_url="login_admin")
+@login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def dashboard_admin(request):
-    return render(request, 'accounts/dashboard_admin.html')
+    # Calculate the start and end of the current year
+    current_date = datetime.now()
+    start_of_year = current_date.replace(month=1, day=1)
+    end_of_year = start_of_year.replace(year=start_of_year.year + 1) - timedelta(days=1)
+
+    # Filter OrderProduct objects for the current year
+    orders = Order.objects.filter(created_at__range=[start_of_year, end_of_year]) \
+        .order_by('-created_at')
+    #Finding Total Order Count:
+    orders_count = orders.count()
+
+    # Calculate the sum of order amount for the current year
+    total_order_amount = orders.aggregate(total_order_amount=Sum('order_total'))[
+                             'total_order_amount'] or 0
+
+    #Fetching number of Active Users:
+    users = Profile.objects.filter(user__is_active=True)
+    users_count = users.count()
+
+    #Fetching number of Categories:
+    categories = Category.objects.all()
+    categories_count = categories.count()
+
+    # Fetching number of Products:
+    products = Product.objects.all()
+    products_count = products.count()
+
+    # Fetching number of Coupons:
+    coupons = Coupons.objects.all()
+    coupons_count = coupons.count()
+
+    context = {
+        'start_of_year': start_of_year,
+        'end_of_year': end_of_year,
+        'orders': orders,
+        'total_order_amount': total_order_amount,
+        'orders_count': orders_count,
+        'users_count': users_count,
+        'categories_count': categories_count,
+        'products_count': products_count,
+        'coupons_count': coupons_count,
+    }
+    return render(request, 'admin/dashboard_admin.html', context)
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def category_list(request):
     category_list = Category.objects.all()
     return render(request, 'admin/category_list.html', {'category_list' : category_list})
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def category_add(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST, request.FILES)
@@ -267,7 +319,7 @@ def category_add(request):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
-
+@user_passes_test(is_admin, login_url='login_admin')
 def category_update(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     if request.method == 'POST':
@@ -294,12 +346,14 @@ def category_toggle_status(request, id):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def product_list(request):
     product_list = Product.objects.all()
     return render(request, 'admin/product_list.html', {'product_list' : product_list})
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def product_add(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
@@ -326,6 +380,7 @@ def product_add(request):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def product_update(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     if request.method == 'POST':
@@ -349,12 +404,16 @@ def product_toggle_status(request, id):
     product.save()
     return redirect('product_list')
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def variant_list(request):
     variant_list = Variant.objects.all()
     return render(request, 'admin/variant_list.html', {'variant_list': variant_list})
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def variant_add(request):
     if request.method == 'POST':
         form = VariantForm(request.POST)
@@ -376,6 +435,7 @@ def variant_add(request):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def variant_update(request, variant_id):
     variant = get_object_or_404(Variant, pk=variant_id)
 
@@ -390,6 +450,7 @@ def variant_update(request, variant_id):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def variant_delete(request, variant_id):
     variant_to_delete = Variant.objects.filter(id=variant_id)
     variant_to_delete.delete()
@@ -398,6 +459,7 @@ def variant_delete(request, variant_id):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def users_list(request):
     profiles = Profile.objects.all()
     return render(request, 'admin/users_list.html', {'profiles': profiles})
@@ -413,6 +475,7 @@ def toggle_user_status(request, user_id):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
 def order_list(request):
     orders = Order.objects.all().order_by('-created_at')
     return render(request, 'admin/order-list.html', {'orders' : orders})
@@ -495,6 +558,7 @@ def decrease_stock(product, quantity):
         product.stock -= quantity
         product.save()
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
 @user_passes_test(is_admin, login_url='login_admin')
 def coupon_list(request):
@@ -547,14 +611,12 @@ def edit_coupon_offer(request, coupon_id):
 @login_required(login_url='login_admin')
 @user_passes_test(is_admin, login_url='login_admin')
 def coupon_toggle_status(request, coupon_id):
-    coupon = get_object_or_404(Coupons, id=coupon_id)
-    if coupon.is_listed:
-        coupon.is_listed = False
-    else:
-        coupon.is_listed = True
-    # coupon.is_listed = not coupon.is_listed
+    coupon = get_object_or_404(Coupons, pk=coupon_id)
+    coupon.is_listed = not coupon.is_listed
+    coupon.save()
     return redirect('coupon_list')
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
 @user_passes_test(is_admin, login_url='login_admin')
 def product_offer_list(request):
@@ -570,6 +632,7 @@ def product_offer_list(request):
 
     return render(request, 'admin/product-offer-list.html', context)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
 @user_passes_test(is_admin, login_url='login_admin')
 def add_product_offer(request):
@@ -579,6 +642,7 @@ def add_product_offer(request):
     }
     return render(request, 'admin/list-products-add-offer.html', context)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_admin')
 @user_passes_test(is_admin, login_url='login_admin')
 def add_offer_percentage(request, product_id):
@@ -614,6 +678,15 @@ def edit_product_offer(request, product_id):
 def delete_product_offer(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     product.offer_percentage=0
+    product.save()
+    return redirect('product_offer_list')
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url='login_admin')
+@user_passes_test(is_admin, login_url='login_admin')
+def offer_toggle_status(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    product.is_listed_offer = not product.is_listed_offer
     product.save()
     return redirect('product_offer_list')
 
@@ -768,17 +841,24 @@ def order_detail(request, order_id):
     }
     return render(request, 'accounts/order-detail.html', context)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='login_user')
 def my_coupons(request):
     if request.user.is_authenticated:
         coupons = Coupons.objects.all()
         user = request.user
+        current_time = timezone.localtime(timezone.now())
 
         coupon_statuses = []
 
         for coupon in coupons:
-            is_used = UserCoupons.objects.filter(coupon=coupon, user=user, is_used=True).exists()
-            coupon_statuses.append("Used" if is_used else "Active")
+            if coupon.valid_from <= current_time <= coupon.valid_to:
+                is_used = UserCoupons.objects.filter(coupon=coupon, user=user, is_used=True).exists()
+                coupon_statuses.append("Used" if is_used else "Active")
+            else:
+                coupon.is_expired = True
+                coupon.save()
+                coupon_statuses.append("Expired")
 
         coupon_data = zip(coupons, coupon_statuses)
 
@@ -870,16 +950,18 @@ def forgot_password(request):
         except:
             return HttpResponse("User doesnt exist")
 
-        otp = get_random_string(12)
+        otp = get_random_string(8, '0123456789')
         messagehandler = MessageHandler(user.phone_number, otp).send_otp_via_message()
         user.set_password(otp)
         user.save()
         logout(request)
-        messages.success(request, 'The code to reset your password has been sent to your mobile number.')
+        messages.success(request, 'The new password has been sent to your mobile number.')
         return redirect('login_user')
 
     return render(request, 'accounts/forgot-password-user.html')
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url='login_user')
 def add_money_wallet(request):
     if request.method == "POST":
         amount = float(request.POST.get('amount', 0))
