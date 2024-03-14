@@ -21,9 +21,10 @@ class MyAccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, first_name, last_name, email, password):
+    def create_superuser(self, first_name, last_name, email, phone_number, password):
         user = self.create_user(
             email = self.normalize_email(email),
+            phone_number = phone_number,
             password = password,
             first_name = first_name,
             last_name = last_name
@@ -53,7 +54,7 @@ class Account(AbstractBaseUser):
     is_superadmin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
 
     objects = MyAccountManager()
 
